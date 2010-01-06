@@ -1,5 +1,23 @@
 <?php
 // $Id$
+/**
+ * MULTICRON by David Stoline
+ *
+ * PURPOSE: To help manage large multi site installations by automating the cron
+ * setup process through a web interface.  This module will provide several
+ * different methods of initializing cron on different domains running Drupal.
+ *
+ * TODO:
+ *   function multicron_admin_settings
+ *     @todo offer different methods of running cron other then curl
+ *     @todo automatic scan of the sites folder to prepopulate
+ *   function multicron_admin_settings_validate
+ *     @todo trim off extra newlines not sure if that goes here....
+ * BUGS:
+ *
+ * API:
+ *
+ */
 
 // function hook_perm() {}
 // function hook_requirements() {}
@@ -46,9 +64,9 @@ function multicron_admin_settings() {
  */
 function multicron_admin_settings_validate($form, $form_state) {
   $error = FALSE;
-  
+
   $form_state['values']['multicron_sites'] = check_plain($form_state['values']['multicron_sites']);
-  
+
   $cron_sites = explode("\n", $clean);
   foreach ($cron_sites as $site) {
     if (!$pos = strpos($site, 'cron.php')) {

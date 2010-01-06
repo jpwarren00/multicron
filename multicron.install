@@ -1,0 +1,80 @@
+<?php
+/* 
+ * The install function should test for available methods for triggering cron
+ * such as the presenece of Drush, if CURL is available or 'wget'.  It should
+ * also create a reporting database that aggregates the various watchdog events
+ * from various sites into one large admin report/chart.
+ * 
+ * TODO:
+ *   everything
+ *     @todo Just about everything.
+ * BUGS:
+ *
+ * API:
+ */
+
+/**
+ * MULTICRON SCHEMA
+ *
+ * table: multicron
+ *   sid: Site ID, should probably be a hash of the sitename, URL and IP address
+ *   sloc: Sit Location, a fully qualified URL to the site base
+ *   cron_trigger: a text string that identifies the type of mechanism by which cron is launched on the site.
+ * @return array
+ */
+function multicron_schema() {
+  $schema['multicron'] = array(
+    'fields' => array(
+      'sid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'extra' => 'AUTO_INCREMENT',
+        'description' => t('A unique string to identify a site by.'),
+      ),
+      'sloc' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'extra' => 'AUTO_INCREMENT',
+        'description' => t('A fully qualified URL to the site.'),
+      ),
+      'cron_trigger' => array(
+          'type' => 'varchar',
+          'length' => 15,
+          'not null' => TRUE,
+          'default' => 'phpcurl',
+          'description' => t('A text string that identifies the type of mechanism by which cron is launched on the site.'),
+      ),
+      'last_successful_cron' => array(
+          'type' => 'longtext'
+      ),
+    ),
+    'indexes' => array(
+      'sid' => array('sid'),
+      'sloc' => array('sloc'),
+    ),
+
+    'primary key' => array('sid'),
+  );
+  return $schema;
+}
+
+/**
+ *
+ */
+function multicron_install() {
+  drupal_install_schema('multicron');
+
+  drupal_load('module', 'multicron');
+  drupal_set_message(t('Multicron module enabled.'));
+}
+
+/**
+ *
+ */
+function multicron_uninstall() {
+  drupal_uninstall_schema('multicron');
+  drupal_set_message(t('Multicron module uninstalled.'));
+}
+?>
